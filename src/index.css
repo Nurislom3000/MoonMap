@@ -1,0 +1,25 @@
+@import 'tailwindcss';
+
+body {
+	background: #04152b;
+}
+
+.historical-places-bg {
+	background: linear-gradient(61deg, #0a121d 63.99%, #121f31 100%);
+}
+
+.instructions-bg {
+	background: linear-gradient(38deg, #1f2636 0%, #080f1b 96.6%);
+}
+
+.layer-bg {
+	background: linear-gradient(38deg, #1f2636 0%, #080f1b 96.6%);
+}
+
+.goBackButton-bg {
+	background: linear-gradient(38deg, #1f2636 0%, #080f1b 96.6%);
+}
+
+.information-bg {
+	background: linear-gradient(38deg, #1f2636 0%, #080f1b 96.6%);
+}
