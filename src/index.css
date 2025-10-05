@@ -23,3 +23,96 @@ body {
 .information-bg {
 	background: linear-gradient(38deg, #1f2636 0%, #080f1b 96.6%);
 }
+
+.HomePageButtonGradient {
+	background: linear-gradient(
+		90deg,
+		rgba(255, 219, 221, 0.5) 0%,
+		rgba(251, 219, 255, 0.5) 32.21%,
+		rgba(190, 213, 255, 0.5) 70.19%,
+		rgba(226, 255, 253, 0.5) 100%
+	);
+}
+
+.HomePageInnerButtonGradient {
+	background: linear-gradient(
+		90deg,
+		rgba(255, 219, 221, 0.5) 0%,
+		rgba(251, 219, 255, 0.5) 32.21%,
+		rgba(190, 213, 255, 0.5) 70.19%,
+		rgba(226, 255, 253, 0.5) 100%
+	);
+}
+
+.borderGradientHome1 {
+	background: linear-gradient(-50deg, #ff9b9b 0%, #f59bff 50%, #94d6ff 100%);
+}
+
+.borderGradientHome2 {
+	background: linear-gradient(-50deg, #ffeaac 0%, #cdcdcd 50%, #ff9b9b 100%);
+}
+
+.borderGradientHome3 {
+	background: linear-gradient(-50deg, #c8faff 0%, #74b486 100%);
+}
+
+.footerBgGradient1 {
+	background: linear-gradient(
+		136deg,
+		rgba(91, 49, 49, 0.24) 0%,
+		rgba(93, 70, 86, 0.24) 51.92%,
+		rgba(78, 56, 96, 0.24) 100%
+	);
+}
+.footerBgGradient2 {
+	background: linear-gradient(
+		136deg,
+		rgba(250, 91, 0, 0.24) 0%,
+		rgba(93, 86, 70, 0.24) 51.92%,
+		rgba(83, 96, 56, 0.24) 100%
+	);
+}
+.footerBgGradient3 {
+	background: linear-gradient(
+		136deg,
+		rgba(49, 91, 61, 0.24) 0%,
+		rgba(70, 90, 93, 0.24) 51.92%,
+		rgba(68, 56, 96, 0.24) 100%
+	);
+}
+.footerBgGradient4 {
+	background: linear-gradient(
+		136deg,
+		rgba(91, 49, 49, 0.24) 0%,
+		rgba(93, 70, 86, 0.24) 51.92%,
+		rgba(78, 56, 96, 0.24) 100%
+	);
+}
+/*Leaflet*/
+
+.leaflet-container {
+	background: #0f1419 !important;
+}
+.leaflet-tile {
+	filter: contrast(1.1) brightness(0.9);
+}
+.custom-marker {
+	background: none !important;
+	border: none !important;
+}
+.leaflet-control-zoom {
+	background: rgba(15, 20, 25, 0.95) !important;
+	border: 1px solid rgba(59, 130, 246, 0.3) !important;
+	border-radius: 12px !important;
+}
+.leaflet-control-zoom a {
+	background: rgba(15, 20, 25, 0.95) !important;
+	color: #e5e7eb !important;
+	border: 1px solid rgba(59, 130, 246, 0.2) !important;
+	font-size: 18px !important;
+	line-height: 24px !important;
+}
+.leaflet-control-zoom a:hover {
+	background: rgba(59, 130, 246, 0.2) !important;
+	color: #3b82f6 !important;
+}

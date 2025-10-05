@@ -1,52 +1,13 @@
 import React, { useEffect, useRef, useState } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, useLocation } from 'react-router-dom'
+import { lunarData } from '../Data/LunarPoints'
 
 // Данные ориентиров (заглушка для демонстрации)
-const landmarksData = [
-	{
-		id: 1,
-		title: 'Apollo 11 Landing Site',
-		lat: 0.67,
-		lng: 23.47,
-		description: 'First human landing on the Moon',
-		details: 'July 20, 1969',
-	},
-	{
-		id: 2,
-		title: 'Tycho Crater',
-		lat: -43.3,
-		lng: -11.2,
-		description: 'Prominent impact crater',
-		details: '108 million years old',
-	},
-	{
-		id: 3,
-		title: 'Mare Tranquillitatis',
-		lat: 8.5,
-		lng: 31.4,
-		description: 'Sea of Tranquility',
-		details: 'Lunar mare region',
-	},
-	{
-		id: 4,
-		title: 'Copernicus Crater',
-		lat: 9.62,
-		lng: -20.08,
-		description: 'Large impact crater',
-		details: '800 million years old',
-	},
-	{
-		id: 5,
-		title: 'Apollo 17 Landing Site',
-		lat: 20.19,
-		lng: 30.77,
-		description: 'Last human Moon landing',
-		details: 'December 11, 1972',
-	},
-]
+const landmarksData = lunarData
 
 const WorkingLunarMap = () => {
 	const navigate = useNavigate()
+	const location = useLocation()
 	const mapRef = useRef(null)
 	const [selectedLandmark, setSelectedLandmark] = useState(null)
 	const [map, setMap] = useState(null)
@@ -79,6 +40,7 @@ const WorkingLunarMap = () => {
 		'Kaguya (Japanese Mission)',
 	]
 
+	// Layer changing handler
 	const handleBaseLayerChange = layerName => {
 		if (!map || !layersRef.current[layerName]) return
 		const nextLayer = layersRef.current[layerName]
@@ -146,7 +108,9 @@ const WorkingLunarMap = () => {
 			try {
 				map.removeLayer(gameLineRef.current)
 				gameLineRef.current = null
-			} catch (e) {}
+			} catch (e) {
+				console.log(e)
+			}
 		}
 
 		setGameMode(false)
@@ -234,7 +198,7 @@ const WorkingLunarMap = () => {
 				zoom: 2,
 				minZoom: 1,
 				maxZoom: 10,
-				zoomControl: true,
+				zoomControl: false,
 				maxBounds: [
 					[-85, -180],
 					[85, 180],
@@ -321,39 +285,7 @@ const WorkingLunarMap = () => {
 			activeLayerRef.current = lrocWacLayer
 			setCurrentLayer('LROC WAC (Best Quality)')
 
-			// Стили для современного дизайна
-			const style = document.createElement('style')
-			style.textContent = `
-			  .leaflet-container {
-			    background: #0f1419 !important;
-			  }
-			  .leaflet-tile {
-			    filter: contrast(1.1) brightness(0.9);
-			  }
-			  .custom-marker {
-			    background: none !important;
-			    border: none !important;
-			  }
-			  .leaflet-control-zoom {
-			    background: rgba(15, 20, 25, 0.95) !important;
-			    border: 1px solid rgba(59, 130, 246, 0.3) !important;
-			    border-radius: 12px !important;
-			  }
-			  .leaflet-control-zoom a {
-			    background: rgba(15, 20, 25, 0.95) !important;
-			    color: #e5e7eb !important;
-			    border: 1px solid rgba(59, 130, 246, 0.2) !important;
-			    font-size: 18px !important;
-			    line-height: 24px !important;
-			  }
-			  .leaflet-control-zoom a:hover {
-			    background: rgba(59, 130, 246, 0.2) !important;
-			    color: #3b82f6 !important;
-			  }
-			`
-			document.head.appendChild(style)
-
-			// Создаем кастомные маркеры
+			// Создаем кастомные маркеры (точки на карте)
 			const createCustomIcon = () =>
 				window.L.divIcon({
 					className: 'custom-marker',
@@ -599,11 +531,11 @@ const WorkingLunarMap = () => {
 				setMapReady(true)
 			})
 
-			setTimeout(() => {
-				if (!mapReady) {
-					setMapReady(true)
-				}
-			}, 6000)
+			// setTimeout(() => {
+			// 	if (!mapReady) {
+			// 		setMapReady(true)
+			// 	}
+			// }, 6000)
 		} catch (error) {
 			console.error('Ошибка при инициализации карты:', error)
 			setMapReady(false)
@@ -620,6 +552,14 @@ const WorkingLunarMap = () => {
 			setSelectedLandmark(landmark)
 		}
 	}
+
+	useEffect(() => {
+		// Проверяем, нужно ли включить игровой режим при загрузке
+		const params = new URLSearchParams(location.search)
+		if (params.get('game') === '1') {
+			setShowTargetSelection(true)
+		}
+	}, [location.search])
 
 	return (
 		<div className='w-full h-screen bg-gray-900 relative overflow-hidden'>
@@ -813,7 +753,7 @@ const WorkingLunarMap = () => {
 
 			{/* Map Mode Panel */}
 			{!gameMode && (
-				<div className='absolute top-20 left-6 z-50 w-80'>
+				<div className='absolute opacity-95 top-20 left-6 z-50 w-80'>
 					{/* Liquid Glass Container with Glossy Effect */}
 					<div className='relative rounded-3xl overflow-hidden backdrop-blur-2xl bg-gradient-to-br from-blue-700/40 via-gray-950/80 to-blue-900/50 border border-blue-400/40 shadow-[0_0_40px_rgba(0,0,0,0.8),0_20px_60px_rgba(0,0,0,0.5)] p-4'>
 						{/* Top glossy highlight */}
@@ -860,7 +800,7 @@ const WorkingLunarMap = () => {
 
 			{/* Historic Sites Panel */}
 			{!gameMode && (
-				<div className='absolute top-6 right-6 z-50 w-80'>
+				<div className='absolute top-6 opacity-95 right-6 z-50 w-80'>
 					{/* Liquid Glass Container with Glossy Effect */}
 					<div className='relative rounded-3xl overflow-hidden backdrop-blur-2xl bg-gradient-to-br from-blue-700/40 via-gray-950/80 to-blue-900/50 border border-blue-400/40 shadow-[0_0_40px_rgba(0,0,0,0.8),0_20px_60px_rgba(0,0,0,0.5)]'>
 						{/* Top glossy highlight - very subtle and smooth */}
@@ -996,7 +936,7 @@ const WorkingLunarMap = () => {
 			)}
 
 			{/* Controls Panel */}
-			<div className='absolute bottom-6 right-6 z-50 w-64'>
+			<div className='absolute bottom-6 opacity-95 right-6 z-50 w-64'>
 				{/* Liquid Glass Container with Glossy Effect */}
 				<div className='relative rounded-3xl overflow-hidden backdrop-blur-2xl bg-gradient-to-br from-blue-700/40 via-gray-950/80 to-blue-900/50 border border-blue-400/40 shadow-[0_0_40px_rgba(0,0,0,0.8),0_20px_60px_rgba(0,0,0,0.5)] p-5'>
 					{/* Top glossy highlight - very subtle and smooth */}
