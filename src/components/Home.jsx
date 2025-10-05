@@ -68,7 +68,7 @@ const Home = () => {
 
 				<div className='flex gap-9 mt-28'>
 					<div className='borderGradientHome1 rounded-[30px] p-[2px]'>
-						<div className='rounded-[30px] w-[485px] h-[272px] bg-[#222] px-[40px] py-[35px]'>
+						<div className='rounded-[30px] w-[465px] h-[272px] bg-[#222] px-[40px] py-[35px]'>
 							<div className='flex items-center gap-2'>
 								<img src={GamepadImg} alt='#' />
 								<p className='font-semibold text-3xl'>Games</p>
