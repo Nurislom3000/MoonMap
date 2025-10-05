@@ -1176,12 +1176,70 @@ const WorkingLunarMap = () => {
 								{activeComment.comment}
 							</div>
 						</div>
-						<button
-							onClick={() => setActiveComment(null)}
-							className='text-white/80 hover:text-white text-lg ml-2 flex-shrink-0 transition-colors'
-						>
-							×
-						</button>
+						<div className='flex flex-shrink-0 gap-2'>
+							<button
+								onClick={() => {
+									// Удаляем комментарий
+									const commentToDelete = activeComment
+
+									// Находим маркер для удаления ДО изменения состояния
+									const markerToRemove = userComments.find(
+										item =>
+											item.lat === commentToDelete.lat &&
+											item.lng === commentToDelete.lng &&
+											item.comment === commentToDelete.comment
+									)?.marker
+
+									// Удаляем из состояния
+									setUserComments(prev => {
+										const filtered = prev.filter(
+											item =>
+												!(
+													item.lat === commentToDelete.lat &&
+													item.lng === commentToDelete.lng &&
+													item.comment === commentToDelete.comment
+												)
+										)
+
+										// Обновляем localStorage
+										const commentsData = filtered.map(item => ({
+											lat: item.lat,
+											lng: item.lng,
+											comment: item.comment,
+										}))
+										localStorage.setItem(
+											'moon_comments',
+											JSON.stringify(commentsData)
+										)
+
+										return filtered
+									})
+
+									// Удаляем маркер с карты
+									if (markerToRemove && map) {
+										map.removeLayer(markerToRemove)
+									}
+
+									// Закрываем активный комментарий
+									setActiveComment(null)
+								}}
+								className='text-red-400 hover:text-red-300 transition-colors bg-red-500/20 hover:bg-red-500/30 p-2 rounded-md flex items-center justify-center'
+								title='Delete comment'
+							>
+								<img
+									src='/src/assets/TrashCan.png'
+									alt='Delete'
+									className='w-5 h-5'
+								/>
+							</button>
+							<button
+								onClick={() => setActiveComment(null)}
+								className='text-white/80 hover:text-white text-lg transition-colors'
+								title='Close'
+							>
+								×
+							</button>
+						</div>
 					</div>
 				</div>
 			)}
