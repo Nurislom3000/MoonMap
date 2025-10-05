@@ -32,6 +32,11 @@ const WorkingLunarMap = () => {
 	const gameTargetRef = useRef(null)
 	const gameLineRef = useRef(null)
 
+	// Состояния для комментариев
+	const [commentModal, setCommentModal] = useState(null) // {lat, lng}
+	const [userComments, setUserComments] = useState([]) // [{lat, lng, comment, marker}]
+	const [activeComment, setActiveComment] = useState(null) // {lat, lng, comment}
+
 	const layerOptions = [
 		'LROC WAC (Best Quality)',
 		'LOLA Color (Color Topography)',
@@ -493,27 +498,24 @@ const WorkingLunarMap = () => {
 				} else {
 					// Обычный режим
 					console.log('Normal mode')
-					// Удаляем предыдущий синий маркер, если есть
 					if (clickMarkerRef.current) {
 						lunarMap.removeLayer(clickMarkerRef.current)
 					}
-
 					// Создаем синий маркер
 					const blueIcon = window.L.divIcon({
 						className: 'custom-marker',
 						html: `<div style="
-							width: 16px; 
-							height: 16px; 
-							background: #3b82f6;
-							border: 2px solid #ffffff;
-							border-radius: 50%;
-							box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.4);
-						"></div>`,
+            width: 16px; 
+            height: 16px; 
+            background: #3b82f6;
+            border: 2px solid #ffffff;
+            border-radius: 50%;
+            box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.4);
+        "></div>`,
 						iconSize: [20, 20],
 						iconAnchor: [10, 10],
 					})
 
-					// Добавляем новый синий маркер
 					const newMarker = window.L.marker([lat, lng], {
 						icon: blueIcon,
 					}).addTo(lunarMap)
@@ -521,6 +523,7 @@ const WorkingLunarMap = () => {
 					clickMarkerRef.current = newMarker
 					setClickedCoordinates({ lat, lng })
 					setClickedPoint({ lat, lng })
+					setCommentModal({ lat, lng, marker: newMarker }) // ← показываем модалку
 					console.log('Clicked coordinates:', { lat, lng })
 				}
 			})
@@ -536,6 +539,39 @@ const WorkingLunarMap = () => {
 			// 		setMapReady(true)
 			// 	}
 			// }, 6000)
+
+			// После создания lunarMap и слоёв
+			const savedComments = localStorage.getItem('moon_comments')
+			if (savedComments) {
+				try {
+					const parsed = JSON.parse(savedComments)
+					parsed.forEach(({ lat, lng, comment }) => {
+						const blueIcon = window.L.divIcon({
+							className: 'custom-marker',
+							html: `<div style="
+          width: 16px; 
+          height: 16px; 
+          background: #3b82f6;
+          border: 2px solid #ffffff;
+          border-radius: 50%;
+          box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.4);
+        "></div>`,
+							iconSize: [20, 20],
+							iconAnchor: [10, 10],
+						})
+						const marker = window.L.marker([lat, lng], {
+							icon: blueIcon,
+						}).addTo(lunarMap)
+						marker.on('click', () => {
+							setActiveComment({ lat, lng, comment })
+						})
+						// Добавляем маркер в userComments
+						setUserComments(prev => [...prev, { lat, lng, comment, marker }])
+					})
+				} catch (e) {
+					console.error('Ошибка загрузки комментариев:', e)
+				}
+			}
 		} catch (error) {
 			console.error('Ошибка при инициализации карты:', error)
 			setMapReady(false)
@@ -1026,6 +1062,98 @@ const WorkingLunarMap = () => {
 
 			{/* Map Container */}
 			<div ref={mapRef} className='w-full h-full z-40' />
+
+			{/* Comment Modal */}
+			{commentModal && (
+				<div className='absolute inset-0 z-[80] bg-black/60 flex items-center justify-center'>
+					<div className='bg-gray-800 rounded-2xl p-8 w-full max-w-md border border-blue-500/30'>
+						<h2 className='text-xl font-bold text-white mb-4'>Add a comment</h2>
+						<p className='text-gray-400 mb-4'>
+							Coordinates: {commentModal.lat.toFixed(4)},{' '}
+							{commentModal.lng.toFixed(4)}
+						</p>
+						<textarea
+							className='w-full h-24 p-2 rounded-lg bg-gray-700 text-white mb-4'
+							placeholder='Type your comment here...'
+							id='userCommentInput'
+						/>
+						<div className='flex gap-3'>
+							<button
+								className='bg-blue-600 text-white px-4 py-2 rounded-lg'
+								onClick={() => {
+									const comment =
+										document.getElementById('userCommentInput').value
+									if (comment.trim()) {
+										// Сохраняем комментарий и маркер
+										setUserComments(prev => {
+											const updated = [
+												...prev,
+												{
+													lat: commentModal.lat,
+													lng: commentModal.lng,
+													comment,
+													// marker не сохраняем в localStorage
+												},
+											]
+											localStorage.setItem(
+												'moon_comments',
+												JSON.stringify(updated)
+											)
+											return updated
+										})
+										// Добавляем обработчик клика на маркер
+										commentModal.marker.on('click', () => {
+											setActiveComment({
+												lat: commentModal.lat,
+												lng: commentModal.lng,
+												comment,
+											})
+										})
+										setCommentModal(null)
+										setClickedCoordinates(null)
+										setClickedPoint(null)
+										clickMarkerRef.current = null
+									}
+								}}
+							>
+								Add
+							</button>
+							<button
+								className='bg-gray-600 text-white px-4 py-2 rounded-lg'
+								onClick={() => {
+									if (commentModal.marker && map) {
+										map.removeLayer(commentModal.marker)
+									}
+									setCommentModal(null)
+									setClickedCoordinates(null)
+									setClickedPoint(null)
+									clickMarkerRef.current = null
+								}}
+							>
+								Cancel
+							</button>
+						</div>
+					</div>
+				</div>
+			)}
+
+			{/* Active Comment Display */}
+			{activeComment && (
+				<div className='absolute top-6 left-1/2 transform -translate-x-1/2 z-50 bg-blue-700/90 backdrop-blur-sm rounded-2xl px-6 py-4 border border-blue-400/30'>
+					<div className='flex items-center gap-3'>
+						<div className='w-3 h-3 bg-blue-400 rounded-full'></div>
+						<div className='text-white font-medium'>
+							Comment: {activeComment.comment}
+						</div>
+						<button
+							onClick={() => setActiveComment(null)}
+							className='text-white/80 hover:text-white text-lg ml-2'
+						>
+							×
+						</button>
+					</div>
+				</div>
+			)}
 		</div>
 	)
 }

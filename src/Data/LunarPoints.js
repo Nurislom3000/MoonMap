@@ -49,16 +49,6 @@ export const lunarData = [
 			'Diameter: 1,145 km\nAge: ~3.9 billion years\nType: Impact basin\nVolcanic fill: basaltic lava',
 	},
 	{
-		id: 'shackleton-crater',
-		lat: -89.9,
-		lng: 0.0,
-		title: 'Shackleton Crater',
-		description:
-			'Permanently shadowed crater at the south pole with water ice deposits.',
-		details:
-			'Diameter: 21 km\nDepth: 4.2 km\nWater ice: confirmed\nFuture base: candidate site',
-	},
-	{
 		id: 'aristarchus-plateau',
 		lat: 23.7,
 		lng: -47.4,
@@ -89,16 +79,6 @@ export const lunarData = [
 			'Diameter: 950 km\nAge: ~3.8 billion years\nRings: 3 concentric\nVisibility: during libration',
 	},
 	{
-		id: 'lunar-north-pole',
-		lat: 89.5,
-		lng: 0.0,
-		title: 'Lunar North Pole',
-		description:
-			'Region with permanently shadowed craters containing water ice.',
-		details:
-			'Water ice: confirmed\nTemperature: -230°C in shadows\nExploration: Artemis target\nResources: volatile-rich',
-	},
-	{
 		id: 'apollo-17-landing',
 		lat: 20.1911,
 		lng: 30.7723,
@@ -127,15 +107,6 @@ export const lunarData = [
 			'Spectacular mountain range forming the rim of Mare Imbrium basin.',
 		details:
 			'Length: 600 km\nHighest peak: 5 km\nAge: ~3.9 billion years\nType: Basin rim',
-	},
-	{
-		id: 'cabeus-crater',
-		lat: -84.9,
-		lng: -35.5,
-		title: 'Cabeus Crater',
-		description: 'Permanently shadowed crater where LCROSS detected water ice.',
-		details:
-			'Diameter: 98 km\nLCROSS impact: 2009\nWater ice: 5.6% by mass\nTemperature: -230°C',
 	},
 	{
 		id: 'marius-hills',
@@ -322,16 +293,6 @@ export const lunarData = [
 			'Spectacular far side crater with dark floor and central peak.',
 		details:
 			'Diameter: 185 km\nDark floor: basalt filled\nCentral peak: prominent\nAge: ~3.2 billion years',
-	},
-	{
-		id: 'peary-crater',
-		lat: 88.6,
-		lng: 33.0,
-		title: 'Peary Crater',
-		description:
-			'North pole crater with permanently shadowed regions and potential ice.',
-		details:
-			'Diameter: 73 km\nLocation: north pole\nWater ice: possible\nExploration target: Artemis',
 	},
 	{
 		id: 'apollo-14-landing',
