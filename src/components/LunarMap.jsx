@@ -906,9 +906,7 @@ const WorkingLunarMap = () => {
 								}
 							}}
 							className='text-white/80 hover:text-white text-lg ml-2'
-						>
-							×
-						</button>
+						></button>
 					</div>
 				</div>
 			)}
@@ -1065,41 +1063,63 @@ const WorkingLunarMap = () => {
 
 			{/* Comment Modal */}
 			{commentModal && (
-				<div className='absolute inset-0 z-[80] bg-black/60 flex items-center justify-center'>
-					<div className='bg-gray-800 rounded-2xl p-8 w-full max-w-md border border-blue-500/30'>
+				<div className='absolute inset-0 z-[80] bg-black/60 flex items-center justify-center p-4'>
+					<div className='bg-gray-800 rounded-2xl p-6 w-full max-w-md border border-blue-500/30 backdrop-blur-sm shadow-2xl'>
 						<h2 className='text-xl font-bold text-white mb-4'>Add a comment</h2>
-						<p className='text-gray-400 mb-4'>
+						<p className='text-gray-400 mb-4 text-sm'>
 							Coordinates: {commentModal.lat.toFixed(4)},{' '}
 							{commentModal.lng.toFixed(4)}
 						</p>
 						<textarea
-							className='w-full h-24 p-2 rounded-lg bg-gray-700 text-white mb-4'
+							className='w-full min-h-24 max-h-40 p-3 rounded-lg bg-gray-700 text-white mb-4 resize-none overflow-y-auto border border-gray-600 focus:border-blue-400 focus:outline-none transition-colors'
 							placeholder='Type your comment here...'
 							id='userCommentInput'
+							style={{
+								height: 'auto',
+								minHeight: '96px',
+							}}
+							onInput={e => {
+								e.target.style.height = 'auto'
+								e.target.style.height =
+									Math.min(e.target.scrollHeight, 160) + 'px'
+							}}
 						/>
 						<div className='flex gap-3'>
 							<button
-								className='bg-blue-600 text-white px-4 py-2 rounded-lg'
+								className='bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-lg transition-colors font-medium'
 								onClick={() => {
 									const comment =
 										document.getElementById('userCommentInput').value
 									if (comment.trim()) {
 										// Сохраняем комментарий и маркер
 										setUserComments(prev => {
-											const updated = [
-												...prev,
-												{
-													lat: commentModal.lat,
-													lng: commentModal.lng,
-													comment,
-													// marker не сохраняем в localStorage
-												},
-											]
+											// Создаем новый комментарий без циклических ссылок
+											const newComment = {
+												lat: commentModal.lat,
+												lng: commentModal.lng,
+												comment,
+											}
+
+											// Фильтруем только нужные данные из предыдущих комментариев
+											const prevCommentsData = prev.map(item => ({
+												lat: item.lat,
+												lng: item.lng,
+												comment: item.comment,
+											}))
+
+											const updated = [...prevCommentsData, newComment]
+
+											// Сохраняем только данные без маркеров в localStorage
 											localStorage.setItem(
 												'moon_comments',
 												JSON.stringify(updated)
 											)
-											return updated
+
+											// Возвращаем полный массив с маркерами для состояния
+											return [
+												...prev,
+												{ ...newComment, marker: commentModal.marker },
+											]
 										})
 										// Добавляем обработчик клика на маркер
 										commentModal.marker.on('click', () => {
@@ -1119,7 +1139,7 @@ const WorkingLunarMap = () => {
 								Add
 							</button>
 							<button
-								className='bg-gray-600 text-white px-4 py-2 rounded-lg'
+								className='bg-gray-600 hover:bg-gray-700 text-white px-6 py-2 rounded-lg transition-colors font-medium'
 								onClick={() => {
 									if (commentModal.marker && map) {
 										map.removeLayer(commentModal.marker)
@@ -1139,15 +1159,26 @@ const WorkingLunarMap = () => {
 
 			{/* Active Comment Display */}
 			{activeComment && (
-				<div className='absolute top-6 left-1/2 transform -translate-x-1/2 z-50 bg-blue-700/90 backdrop-blur-sm rounded-2xl px-6 py-4 border border-blue-400/30'>
-					<div className='flex items-center gap-3'>
-						<div className='w-3 h-3 bg-blue-400 rounded-full'></div>
-						<div className='text-white font-medium'>
-							Comment: {activeComment.comment}
+				<div
+					className='absolute top-6 left-1/2 transform -translate-x-1/2 z-50 bg-blue-700/90 backdrop-blur-sm rounded-2xl px-6 py-5 border border-blue-400/30 w-[calc(100vw-2rem)] max-w-2xl mx-4 max-h-[calc(100vh-8rem)] overflow-y-auto'
+					style={{
+						scrollbarWidth: 'thin',
+						scrollbarColor: '#60a5fa transparent',
+					}}
+				>
+					<div className='flex items-start gap-3'>
+						<div className='w-4 h-4 bg-blue-400 rounded-full mt-1 flex-shrink-0'></div>
+						<div className='flex-grow min-w-0 overflow-hidden'>
+							<div className='text-blue-200 text-base font-medium mb-2'>
+								Comment:
+							</div>
+							<div className='text-white font-medium break-all whitespace-pre-wrap leading-relaxed overflow-wrap-anywhere max-h-48 overflow-y-auto text-base'>
+								{activeComment.comment}
+							</div>
 						</div>
 						<button
 							onClick={() => setActiveComment(null)}
-							className='text-white/80 hover:text-white text-lg ml-2'
+							className='text-white/80 hover:text-white text-lg ml-2 flex-shrink-0 transition-colors'
 						>
 							×
 						</button>
