@@ -1,6 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react'
 import { useNavigate, useLocation } from 'react-router-dom'
 import { lunarData } from '../Data/LunarPoints'
+import { Trash2 } from 'lucide-react'
 
 // Данные ориентиров (заглушка для демонстрации)
 const landmarksData = lunarData
@@ -1226,11 +1227,7 @@ const WorkingLunarMap = () => {
 								className='text-red-400 hover:text-red-300 transition-colors bg-red-500/20 hover:bg-red-500/30 p-2 rounded-md flex items-center justify-center'
 								title='Delete comment'
 							>
-								<img
-									src='/src/assets/TrashCan.png'
-									alt='Delete'
-									className='w-5 h-5'
-								/>
+								<Trash2 color='red' />
 							</button>
 							<button
 								onClick={() => setActiveComment(null)}
